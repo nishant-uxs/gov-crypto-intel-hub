@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
 
   const parsed = exchanges.map((ex) => ({
     ...ex,
-    assets: JSON.parse(ex.assets || "[]"),
     notices: JSON.parse(ex.notices || "[]"),
     alerts: JSON.parse(ex.alerts || "[]"),
   }));

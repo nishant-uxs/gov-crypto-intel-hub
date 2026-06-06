@@ -130,3 +130,11 @@
 | OTP / Hardware key auth | ⏳ Phase 2 |
 
 **Zero placeholder/hardcoded data** — all displayed data comes from the database via Prisma queries. Seed script populates all 16 tables with real, sourced intelligence data.
+
+### FIU Exchange Data (Updated Jun 2026)
+- **Source:** `fiu_data/` folder — FIU-IND Official Records, May 2026
+- **41 exchanges seeded:** 16 registered (12 domestic + 4 offshore compliant) + 25 blocked (Oct 2025 FIU-IND order)
+- **Schema:** 12 new fields added (headquarters, founded, founders, marketShare, usersCount, products, tdsCompliant, securityRating, majorIncidents, tradingVolumeDailyCr, coldStoragePct, regulatoryNotes)
+- **FiuExchanges tab:** Rich expanded view with HQ, founded, market share, users, security rating, daily volume, cold storage, TDS compliance, founders, products, major incidents, regulatory notes, alerts
+- **Admin exchanges page:** Updated with HQ, founders columns
+- **KPI:** "FIU VASPs: 49 Registered" — auto-computed from active exchange count, sourced from FIU-IND May 2026

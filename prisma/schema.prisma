@@ -53,20 +53,30 @@ model NewsItem {
 }
 
 model Exchange {
-  id                 String   @id @default(cuid())
-  name               String
-  registrationNumber String?
-  registrationDate   DateTime?
-  status             String   @default("active")
-  jurisdiction       String   @default("India")
-  ceo                String   @default("")
-  amlOfficer         String   @default("")
-  assets             String   @default("[]")
-  riskLevel          String   @default("MEDIUM")
-  notices            String   @default("[]")
-  alerts             String   @default("[]")
-  lastUpdatedBy      String?
-  lastUpdatedAt      DateTime @default(now())
+  id                   String   @id @default(cuid())
+  name                 String
+  registrationNumber   String?
+  registrationDate     DateTime?
+  status               String   @default("ACTIVE")
+  jurisdiction         String   @default("India")
+  headquarters         String   @default("")
+  founded              String   @default("")
+  founders             String   @default("")
+  ceo                  String   @default("")
+  marketShare          String   @default("")
+  usersCount           String   @default("")
+  products             String   @default("")
+  tdsCompliant         Boolean  @default(true)
+  securityRating       String   @default("")
+  majorIncidents       String   @default("")
+  tradingVolumeDailyCr String   @default("")
+  coldStoragePct       String   @default("")
+  riskLevel            String   @default("MEDIUM")
+  notices              String   @default("[]")
+  alerts               String   @default("[]")
+  regulatoryNotes      String   @default("")
+  lastUpdatedBy        String?
+  lastUpdatedAt        DateTime @default(now())
 }
 
 model ScamType {
