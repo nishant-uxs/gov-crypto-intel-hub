@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@layer base {
+  body {
+    @apply bg-navy-950 text-gray-100 font-sans antialiased;
+  }
+}
+
+@layer components {
+  .tab-active {
+    @apply border-b-2 border-blue-500 text-blue-400 font-semibold;
+  }
+  .tab-inactive {
+    @apply text-gray-400 hover:text-gray-200 transition-colors;
+  }
+  .card {
+    @apply bg-navy-900 border border-navy-700 rounded-xl p-5;
+  }
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply bg-navy-700 hover:bg-navy-600 text-gray-200 px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  .input-field {
+    @apply bg-navy-800 border border-navy-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full;
+  }
+  .select-field {
+    @apply bg-navy-800 border border-navy-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a1628;
+}
+::-webkit-scrollbar-thumb {
+  background: #3b5bdb;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4c6ef5;
+}

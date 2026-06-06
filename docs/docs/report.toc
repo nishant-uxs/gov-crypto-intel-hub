@@ -1,0 +1,58 @@
+\contentsline {section}{\numberline {1}Executive Summary}{3}{section.1}%
+\contentsline {section}{\numberline {2}Project Structure}{4}{section.2}%
+\contentsline {section}{\numberline {3}Database Architecture}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Schema Overview — 16 Tables}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}SQLite Design Decision}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}JSON Array Workaround}{7}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Data Flow Architecture}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Complete Request Lifecycle}{8}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Two Data Paths}{8}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}PrismaClient Singleton}{8}{subsection.4.3}%
+\contentsline {section}{\numberline {5}API Routes — Complete Reference}{10}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Route Inventory}{10}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Example: News API Implementation}{10}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Frontend Architecture}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Component Hierarchy}{12}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Tab Components — Common Pattern}{12}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}KPI Strip — Server Component Exception}{12}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}GOV Advisory — Largest Component}{13}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Authentication System}{14}{section.7}%
+\contentsline {subsection}{\numberline {7.1}NextAuth.js Configuration}{14}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Default Admin Credentials}{14}{subsection.7.2}%
+\contentsline {section}{\numberline {8}News Ingestion Pipeline}{16}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Pipeline Architecture}{16}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Configured News Sources}{16}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Export System}{17}{section.9}%
+\contentsline {subsection}{\numberline {9.1}JSON/CSV Export}{17}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}PDF Export with Government Formatting}{17}{subsection.9.2}%
+\contentsline {section}{\numberline {10}AI Brief Integration}{18}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Claude Integration Flow}{18}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Model Configuration}{18}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Admin Panel}{19}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Page Inventory — 15 Pages}{19}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Server vs Client Components in Admin}{19}{subsection.11.2}%
+\contentsline {section}{\numberline {12}PRD Deviations — Complete Log}{20}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Database: PostgreSQL → SQLite}{20}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Array Fields → JSON Strings}{20}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Authentication Simplification}{20}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}News Ingestion Pipeline}{20}{subsection.12.4}%
+\contentsline {subsection}{\numberline {12.5}AI Brief — Model Choice}{20}{subsection.12.5}%
+\contentsline {subsection}{\numberline {12.6}Export Functionality}{21}{subsection.12.6}%
+\contentsline {subsection}{\numberline {12.7}Alert System}{21}{subsection.12.7}%
+\contentsline {subsection}{\numberline {12.8}Admin Panel — CRUD Operations}{21}{subsection.12.8}%
+\contentsline {subsection}{\numberline {12.9}Role-Based Access Control}{21}{subsection.12.9}%
+\contentsline {subsection}{\numberline {12.10}Testing}{21}{subsection.12.10}%
+\contentsline {subsection}{\numberline {12.11}Docker / Deployment}{22}{subsection.12.11}%
+\contentsline {section}{\numberline {13}Seed Data — Complete Inventory}{23}{section.13}%
+\contentsline {subsection}{\numberline {13.1}All Seeded Tables with Sources}{23}{subsection.13.1}%
+\contentsline {section}{\numberline {14}Setup \& Deployment Guide}{24}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Quick Start (Development)}{24}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Production Build}{24}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}Environment Variables}{24}{subsection.14.3}%
+\contentsline {subsection}{\numberline {14.4}PostgreSQL Migration}{24}{subsection.14.4}%
+\contentsline {section}{\numberline {15}Build Verification}{26}{section.15}%
+\contentsline {subsection}{\numberline {15.1}Final Build Output}{26}{subsection.15.1}%
+\contentsline {section}{\numberline {16}Key Utilities}{28}{section.16}%
+\contentsline {subsection}{\numberline {16.1}Helper Functions (src/lib/utils.ts)}{28}{subsection.16.1}%
+\contentsline {subsection}{\numberline {16.2}NPM Scripts}{28}{subsection.16.2}%
+\contentsline {section}{\numberline {17}Conclusion}{29}{section.17}%

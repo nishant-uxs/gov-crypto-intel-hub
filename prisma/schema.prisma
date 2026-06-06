@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  password    String
+  role        String   @default("EDITOR")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastLoginAt DateTime?
+  auditLogs   AuditLog[]
+}
+
+model NewsSource {
+  id             String    @id @default(cuid())
+  name           String
+  url            String
+  type           String    @default("RSS")
+  region         String    @default("INDIA")
+  frequencyHours Int       @default(6)
+  isActive       Boolean   @default(true)
+  lastFetchedAt  DateTime?
+  lastError      String?
+  newsItems      NewsItem[]
+}
+
+model NewsItem {
+  id           String    @id @default(cuid())
+  title        String
+  summary      String    @default("")
+  body         String    @default("")
+  url          String
+  sourceId     String
+  source       NewsSource @relation(fields: [sourceId], references: [id])
+  tag          String    @default("")
+  region       String    @default("INDIA")
+  publishedAt  DateTime
+  ingestedAt   DateTime  @default(now())
+  isPinned     Boolean   @default(false)
+  isBreaking   Boolean   @default(false)
+  isBackfill   Boolean   @default(false)
+  isSuppressed Boolean   @default(false)
+  exchangeId   String?
+  scamTypeId   String?
+}
+
+model Exchange {
+  id                 String   @id @default(cuid())
+  name               String
+  registrationNumber String?
+  registrationDate   DateTime?
+  status             String   @default("active")
+  jurisdiction       String   @default("India")
+  ceo                String   @default("")
+  amlOfficer         String   @default("")
+  assets             String   @default("[]")
+  riskLevel          String   @default("MEDIUM")
+  notices            String   @default("[]")
+  alerts             String   @default("[]")
+  lastUpdatedBy      String?
+  lastUpdatedAt      DateTime @default(now())
+}
+
+model ScamType {
+  id                String   @id @default(cuid())
+  name              String
+  description       String   @default("")
+  riskLevel         String   @default("MEDIUM")
+  indiaPrevalence   String   @default("")
+  vectors           String   @default("[]")
+  redFlags          String   @default("[]")
+  victimProfile     String   @default("")
+  investigationTips String   @default("")
+  linkedNewsIds     String   @default("[]")
+  lastUpdatedAt     DateTime @default(now())
+}
+
+model Country {
+  id              String   @id @default(cuid())
+  name            String
+  isoCode         String   @default("")
+  stance          String   @default("REGULATED")
+  regulatoryBody  String   @default("")
+  keyLegislation  String   @default("")
+  vaspLicensing   String   @default("")
+  taxTreatment    String   @default("")
+  fatfStatus      String   @default("")
+  cbdcStatus      String   @default("")
+  sourceUrl       String   @default("")
+  effectiveDate   DateTime?
+  lastUpdatedAt   DateTime @default(now())
+}
+
+model Kpi {
+  id              String   @id @default(cuid())
+  label           String
+  value           String
+  colorClass      String   @default("blue")
+  sourceCitation  String   @default("")
+  effectiveDate   DateTime?
+  isComputed      Boolean  @default(false)
+  computeKey      String?
+  lastUpdatedAt   DateTime @default(now())
+}
+
+model AdvisoryLegislative {
+  id             String   @id @default(cuid())
+  title          String
+  type           String   @default("bill")
+  status         String   @default("INTRODUCED")
+  sponsor        String   @default("")
+  dateIntroduced DateTime?
+  dateEnacted    DateTime?
+  summary        String   @default("")
+  sourceUrl      String   @default("")
+  lastUpdatedAt  DateTime @default(now())
+}
+
+model AdvisoryFatf {
+  id               String   @id @default(cuid())
+  recNumber        Int
+  title            String
+  complianceStatus String   @default("PARTIALLY COMPLIANT")
+  gaps             String   @default("")
+  remediationNotes String   @default("")
+  lastAssessedDate DateTime?
+}
+
+model AdvisoryTds {
+  id           String  @id @default(cuid())
+  fyLabel      String
+  amountCr     Float
+  isProjection Boolean @default(false)
+  notes        String  @default("")
+  source       String  @default("")
+}
+
+model AdvisoryGst {
+  id             String @id @default(cuid())
+  year           Int
+  amountEvadedCr Float
+  noticesIssued  Int
+  source         String @default("")
+}
+
+model AdvisoryState {
+  id              String   @id @default(cuid())
+  stateName       String
+  scamLossesCr    Float
+  topScamType     String
+  notableActions  String   @default("")
+  source          String   @default("")
+  lastUpdatedAt   DateTime @default(now())
+}
+
+model AdvisoryCarf {
+  id              String   @id @default(cuid())
+  stepNumber      Int
+  title           String
+  description     String   @default("")
+  targetDate      DateTime?
+  status          String   @default("PLANNED")
+  responsibleBody String   @default("")
+}
+
+model AdvisoryRecommendation {
+  id                String @id @default(cuid())
+  title             String
+  description       String @default("")
+  priority          String @default("MEDIUM")
+  implementingBody  String @default("")
+  targetTimeline    String @default("")
+  status            String @default("PROPOSED")
+  rationale         String @default("")
+}
+
+model AdvisoryLegal {
+  id            String @id @default(cuid())
+  court         String
+  caseReference String
+  caseName      String
+  year          Int
+  category      String @default("TAX")
+  rulingSummary String @default("")
+  policyImpact  String @default("")
+  sourceUrl     String @default("")
+}
+
+model AiBrief {
+  id              String   @id @default(cuid())
+  section1        String   @default("")
+  section2        String   @default("")
+  section3        String   @default("")
+  sourceItemIds   String   @default("[]")
+  modelUsed       String   @default("")
+  tokensUsed      Int      @default(0)
+  generatedAt     DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  tableName  String
+  recordId   String
+  beforeJson String   @default("{}")
+  afterJson  String   @default("{}")
+  createdAt  DateTime @default(now())
+}
+
+model AlertRule {
+  id        String   @id @default(cuid())
+  name      String
+  trigger   String
+  action    String   @default("email")
+  target    String   @default("")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
