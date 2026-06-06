@@ -118,10 +118,10 @@ mindmap
       Pinned & Breaking
       Paginated 20/page
     🏦 FIU Exchanges
-      Registered VASPs
-      Risk assessment
-      Compliance status
-      CEO/AML details
+      41 real exchanges (16 registered + 25 blocked)
+      HQ, founded, founders, market share, users
+      TDS compliance, security rating, incidents
+      Daily volume, cold storage, regulatory notes
     ⚠️ Scam Registry
       10 scam types
       Attack vectors
@@ -207,11 +207,21 @@ erDiagram
         string id PK
         string name
         string registrationNumber
+        string headquarters
+        string founded
+        string founders
+        string marketShare
+        string usersCount
+        string products
+        boolean tdsCompliant
+        string securityRating
+        string majorIncidents
+        string tradingVolumeDailyCr
+        string coldStoragePct
+        string regulatoryNotes
         string status
         string jurisdiction
         string ceo
-        string amlOfficer
-        string assets
         string riskLevel
         string notices
         string alerts
@@ -367,7 +377,7 @@ flowchart TD
 flowchart LR
     subgraph Sources["📥 Data Sources"]
         TDS["AdvisoryTds<br/>5 records"]
-        Exchanges["Exchange<br/>8 records"]
+        Exchanges["Exchange<br/>41 records"]
         News["NewsItem<br/>ENFORCEMENT tag"]
         States["AdvisoryState<br/>8 states"]
         GST["AdvisoryGst<br/>4 years"]

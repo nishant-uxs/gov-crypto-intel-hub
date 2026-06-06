@@ -922,8 +922,8 @@ Docker Compose for PostgreSQL + app & \texttt{docker-compose.yml} for PostgreSQL
 \endhead
 User & 1 & Manual & admin@govcryptointel.org \\
 NewsSource & 8 & Real RSS endpoints & PIB India, CoinDesk, The Block \\
-Kpi & 16 & MoF, Chainalysis, NASSCOM, FBI IC3, DeFiLlama, Bloomberg, CoinGecko, Atlantic Council, OECD, ED, CBIC & "FIU Registered VASPs: 48", "Global Crypto Users: 675M" \\
-Exchange & 8 & FIU-IND VASP register & WazirX, CoinDCX, ZebPay, CoinSwitch \\
+Kpi & 16 & MoF, Chainalysis, NASSCOM, FBI IC3, DeFiLlama, Bloomberg, CoinGecko, Atlantic Council, OECD, ED, CBIC & "FIU Registered VASPs: 49", "Global Crypto Users: 675M" \\
+Exchange & 41 & FIU-IND Official Records, May 2026 & 16 registered (Bitbns, CoinDCX, WazirX, ZebPay, CoinSwitch, Mudrex, Binance, Coinbase, KuCoin, MEXC...) + 25 blocked (BitMEX, LBank, BingX, Poloniex...) \\
 ScamType & 10 & ED investigations, CERT-In & Pig Butchering, Fake Exchange App, Ponzi MLM \\
 Country & 10 & FATF, national regulators & India, USA, UK, Singapore, UAE, Japan, EU, China, Brazil, Nigeria \\
 AdvisoryLegislative & 5 & MoF gazette notifications & PMLA Amendment 2023, Crypto Token Bill 2025 \\
@@ -938,6 +938,50 @@ AdvisoryRecommendation & 8 & DST policy analysis & Mandatory FIU registration, N
 \caption{Seed Data Inventory}
 \label{tab:seed}
 \end{longtable}
+
+\subsection{FIU Exchange Data Integration (June 2026)}
+
+The exchange database was upgraded from 8 sample entries to \textbf{41 real exchanges} sourced from FIU-IND official records and web intelligence (May 2026).
+
+\subsubsection*{Data Source}
+\begin{itemize}[nosep]
+    \item \texttt{fiu\_data/01\_FIU\_EXCHANGES\_MASTER\_DATABASE.md} — Comprehensive intelligence report
+    \item \texttt{fiu\_data/FIU\_EXCHANGES\_MASTER\_DATABASE.csv} — Structured CSV with 17 named exchanges
+    \item FIU-IND public register and enforcement orders (Oct 2025 blocking order)
+\end{itemize}
+
+\subsubsection*{Exchange Breakdown}
+\begin{center}
+\begin{tabular}{llr}
+\toprule
+\textbf{Tier} & \textbf{Category} & \textbf{Count} \\
+\midrule
+Tier 1 & Major Domestic Exchanges (Bitbns, CoinDCX, WazirX, ZebPay, CoinSwitch, Mudrex, Unocoin, Giottus, BuyUcoin, Pyor, Valr, Bytex) & 12 \\
+Tier 2 & Offshore Compliant (Binance, Coinbase, KuCoin, MEXC) & 4 \\
+Tier 3 & Blocked/Non-Compliant (BitMEX, LBank, BingX, CoinW, Phemex, Poloniex, +19 more) & 25 \\
+\midrule
+\textbf{Total} & & \textbf{41} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{New Schema Fields (12 added)}
+\begin{itemize}[nosep]
+    \item \texttt{headquarters}, \texttt{founded}, \texttt{founders} — Corporate details
+    \item \texttt{marketShare}, \texttt{usersCount} — Market intelligence
+    \item \texttt{products} — Service offerings
+    \item \texttt{tdsCompliant} — Tax compliance flag
+    \item \texttt{securityRating}, \texttt{majorIncidents} — Risk assessment
+    \item \texttt{tradingVolumeDailyCr}, \texttt{coldStoragePct} — Operational metrics
+    \item \texttt{regulatoryNotes} — FIU compliance notes
+\end{itemize}
+
+\subsubsection*{Key Incidents Tracked}
+\begin{itemize}[nosep]
+    \item \textbf{WazirX Hack (Jul 2024):} \$230M stolen by Lazarus Group. 85\% recovered via Singapore HC restructuring (Oct 2025).
+    \item \textbf{Binance Penalty:} Rs 188 Cr FIU fine. Blocked Jan 2024, re-registered Aug 2024.
+    \item \textbf{Oct 2025 Blocking Order:} 25 exchanges blocked (MeitY URL/APK blocking, app store removal).
+\end{itemize}
 
 \newpage
 
