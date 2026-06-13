@@ -3,6 +3,9 @@ import { Header } from "@/components/layout/Header";
 import { KpiStrip } from "@/components/layout/KpiStrip";
 import { DashboardTabs } from "@/components/layout/DashboardTabs";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function runIngestWithTimeout(timeoutMs = 5000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);

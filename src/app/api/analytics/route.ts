@@ -2,6 +2,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const tdsData = await prisma.advisoryTds.findMany({ orderBy: { fyLabel: "asc" } });
   const exchanges = await prisma.exchange.findMany();
