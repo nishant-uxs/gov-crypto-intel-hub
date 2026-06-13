@@ -22,7 +22,9 @@ services:
       - key: NEXTAUTH_SECRET
         value: "__REPLACE_WITH_SECRET__"
       - key: DATABASE_URL
-        value: "__REPLACE_WITH_DATABASE_URL__"
+        fromDatabase:
+          name: govcrypto-db
+          property: connectionString
       - key: ANTHROPIC_API_KEY
         value: ""
 
@@ -36,20 +38,23 @@ services:
     plan: starter
     envVars:
       - key: DATABASE_URL
-        value: "__REPLACE_WITH_DATABASE_URL__"
+        fromDatabase:
+          name: govcrypto-db
+          property: connectionString
       - key: NEXTAUTH_SECRET
         value: "__REPLACE_WITH_SECRET__"
 
 databases:
   - name: govcrypto-db
+    databaseName: govcrypto
+    user: govcrypto
     plan: starter
     region: oregon
 
 # Notes:
-# 1. After importing this blueprint into Render, update the `DATABASE_URL` env var for the web
-#    service and cron job with the connection string from the created PostgreSQL database.
+# 1. `DATABASE_URL` is wired automatically from the Render Postgres database.
 # 2. Set `NEXTAUTH_SECRET` to a strong secret in Render's Environment settings.
-# 3. If you prefer to use an external managed DB, set DATABASE_URL accordingly and remove the
-#    `databases` section before import.
+# 3. If you prefer to use an external managed DB, remove the `databases` section and set
+#    `DATABASE_URL` manually in both the web service and cron job.
 # 4. The build process runs `prisma db push` and the seed script; if you prefer to seed manually,
 #    edit or remove the seed step in `buildCommand`.
