@@ -1,6 +1,11 @@
 
 import { prisma } from "./prisma";
 
+function safePublishedAt(value: any) {
+  const date = value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+}
+
 async function ingestSource(source: any) {
   try {
     const Parser = require("rss-parser");
@@ -22,7 +27,7 @@ async function ingestSource(source: any) {
           url: item.link || "",
           sourceId: source.id,
           region: source.region,
-          publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
+          publishedAt: safePublishedAt(item.pubDate),
           tag: "",
         },
       });

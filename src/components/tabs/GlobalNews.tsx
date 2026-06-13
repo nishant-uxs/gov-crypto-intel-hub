@@ -21,9 +21,11 @@ export function GlobalNews() {
   const [search, setSearch] = useState("");
   const [tagFilter, setTagFilter] = useState("");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
+    setRefreshing(true);
     const params = new URLSearchParams();
     params.set("page", String(page));
     params.set("region", "GLOBAL");
@@ -34,9 +36,16 @@ export function GlobalNews() {
     setItems(data.items);
     setTotalPages(data.totalPages);
     setLoading(false);
+    setRefreshing(false);
   }, [page, search, tagFilter]);
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
+
+  useEffect(() => {
+    const onFocus = () => fetchItems();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [fetchItems]);
 
   const toggleExpand = (id: string) => {
     const next = new Set(expanded);
@@ -46,6 +55,11 @@ export function GlobalNews() {
 
   return (
     <div className="py-6">
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <p className="text-xs text-gray-400">{refreshing ? "Refreshing latest news..." : "Showing latest fetched news"}</p>
+        <button onClick={fetchItems} className="btn-secondary text-xs">Refresh Now</button>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

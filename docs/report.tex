@@ -68,7 +68,7 @@
 \Large Complete Technical Report\\[0.3em]
 \normalsize Implementation \& Architecture Documentation}
 \author{\large Digital South Trust\\Blockchain Centre of Excellence, Vellore}
-\date{\today}
+% \date{\today}
 
 \begin{document}
 
@@ -84,10 +84,10 @@ Distribution restricted to authorized personnel only.
 \end{tcolorbox}
 \end{center}
 
-\vfill
-\begin{center}
-\small\textcolor{graytext}{Generated: \today\ | Version 1.0 | Internship Deliverable}
-\end{center}
+% \vfill
+% \begin{center}
+% \small\textcolor{graytext}{Generated: \today\ | Version 1.0 | Internship Deliverable}
+% \end{center}
 
 \newpage
 \tableofcontents
@@ -632,6 +632,21 @@ SEBI Updates & RSS & INDIA & 24h \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\subsection{Recent Development Updates (2026-06-10)}
+
+The codebase received a short iteration to stabilize live news ingestion and the India tab UX. Key changes applied and verified locally:
+
+\begin{itemize}[nosep]
+  \item \textbf{Reliable feeds:} Replaced several failing sources and moved active feeds to BBC, NYTimes, Al Jazeera, CoinDesk, and Cointelegraph. The updater script is \texttt{scripts/update-news-sources.ts} and the seed changes are in \texttt{prisma/seed.ts}.
+  \item \textbf{Ingestion hardening:} Added safe date parsing to avoid crashes on malformed pubDate values (see \texttt{src/lib/ingest.ts} — `safePublishedAt`).
+  \item \textbf{Auto-fetch on open:} The news API now triggers a conditional ingest when sources are stale (configurable via `AUTO_FETCH_NEWS`) — implemented in \texttt{src/app/api/news/route.ts} (`triggerIngestIfNeeded`).
+  \item \textbf{India tab fallback:} If `region=INDIA` returns no items, the API falls back to `GLOBAL` headlines so the India tab always shows recent news (added fallback in \texttt{src/app/api/news/route.ts}).
+  \item \textbf{Deactivate failing feeds:} Known failing or blocked feeds (Reuters, CNBC, TheBlock, some AP endpoints) were marked inactive to avoid repeated errors; the updater script deactivates these automatically.
+  \item \textbf{Admin login fix:} Resolved an admin redirect loop by introducing a top-level login route and adjusting middleware and NextAuth `pages.signIn` to point to the correct path (see \texttt{src/app/admin/*} and \texttt{src/lib/auth.ts}).
+  \item \textbf{Verification run:} After updating sources the ingestion run produced the following sample counts locally: BBC World 41, BBC Business 55, BBC Technology 21, NYTimes Business 49, NYTimes World 56, NYTimes Technology 32, Al Jazeera 25, Cointelegraph 30. Global API and India-fallback were verified via `curl`/`node` requests against \texttt{/api/news}.
+  \item \textbf{Next steps available:} Optionally add Indian domestic feeds (The Hindu, Indian Express, Economic Times, NDTV) to the active list and re-run ingestion to populate India-specific items; or enable scheduled ingestion (cron) for continuous updates.
+\end{itemize}
 
 \newpage
 
@@ -1183,3 +1198,79 @@ The \textbf{Government Crypto Intelligence Hub} is a fully functional, productio
 \end{center}
 
 \end{document}
+
+% ═══════════════════════════════════════════════════════════════
+\newpage
+\section{Sources \& Evidence}
+
+\subsection*{Code files changed}
+The following repository files were modified during the June 10, 2026 iteration and contain the implementation changes referenced in this report:
+\begin{itemize}[nosep]
+  \item \texttt{prisma/seed.ts} — updated active news sources list (BBC/NYTimes/AlJazeera/CoinDesk/Cointelegraph)
+  \item \texttt{scripts/update-news-sources.ts} — script to upsert and deactivate sources
+  \item \texttt{src/lib/ingest.ts} — ingestion hardening: \texttt{safePublishedAt} and robust parsing
+  \item \texttt{src/app/api/news/route.ts} — auto-fetch on open (\texttt{triggerIngestIfNeeded}) and INDIA→GLOBAL fallback
+  \item \texttt{src/app/admin/login/*} and \texttt{src/app/login/page.tsx} — admin login route and redirect fixes
+  \item \texttt{docs/report.tex} — this report (Recent Development Updates + Sources \& Evidence)
+\end{itemize}
+
+\subsection*{Scripts and Commands Executed}
+All commands were run locally in the project root; key commands include:
+\begin{verbatim}
+npx prisma db push
+npx tsx prisma/seed.ts
+npx tsx scripts/update-news-sources.ts
+npm run ingest         # runs: tsx src/lib/ingest.ts
+npm run dev            # start Next.js dev server
+curl "http://localhost:3001/api/news?region=GLOBAL&page=1"
+node -e "(async()=>{...fetch('/api/news')...})()"
+# LaTeX compilation (XeLaTeX):
+xelatex -interaction=nonstopmode report.tex
+xelatex -interaction=nonstopmode report.tex
+\end{verbatim}
+
+\subsection*{External feeds (primary)}
+These public RSS/Atom feeds were added as active sources and used during ingestion:
+\begin{itemize}[nosep]
+  \item https://feeds.bbci.co.uk/news/world/rss.xml
+  \item https://feeds.bbci.co.uk/news/business/rss.xml
+  \item https://feeds.bbci.co.uk/news/technology/rss.xml
+  \item https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
+  \item https://rss.nytimes.com/services/xml/rss/nyt/World.xml
+  \item https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml
+  \item https://www.aljazeera.com/xml/rss/all.xml
+  \item https://www.coindesk.com/arc/outboundfeeds/rss/
+  \item https://cointelegraph.com/rss
+\end{itemize}
+
+\subsection*{Ingestion verification (local run)}
+The following ingestion results were observed when running \texttt{npm run ingest} after updating sources (counts are items ingested during that run):
+\begin{itemize}[nosep]
+  \item BBC World — 41 items
+  \item BBC Business — 55 items
+  \item BBC Technology — 21 items
+  \item NYTimes Business — 49 items
+  \item NYTimes World — 56 items
+  \item NYTimes Technology — 32 items
+  \item Al Jazeera — 25 items
+  \item Cointelegraph — 30 items
+\end{itemize}
+
+These numbers are recorded in the ingestion run output captured in terminal during verification and remain reproducible by running the same script.
+
+\subsection*{Evidence files}
+The following generated artifacts serve as evidence of the work and can be inspected in the workspace:
+\begin{itemize}[nosep]
+  \item \texttt{docs/report.pdf} — Compiled PDF (31 pages) containing this updated report
+  \item \texttt{docs/report.log} — LaTeX compilation transcript (XeLaTeX output)
+  \item Terminal transcript outputs for ingestion and API checks — available in your shell history; sample commands used are listed above.
+\end{itemize}
+
+\subsection*{Notes on unavailable or blocked sources}
+During probing some sources returned network/DNS or HTTP errors in this environment (examples): Reuters feeds (DNS ENOTFOUND), CNBC/TheBlock (HTTP 403), AP endpoints (XML parse errors or redirects). These were deactivated to avoid runtime errors and repeated failures. Deactivation is implemented in \texttt{scripts/update-news-sources.ts}.
+
+\subsection*{Date and verification}
+All changes and verification runs referenced in this section were performed on \textbf{2026-06-10} (local timezone). Re-run commands above to reproduce the ingestion and API verification.
+
+\vspace{1em}
+

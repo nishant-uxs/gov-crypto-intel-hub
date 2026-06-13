@@ -21,25 +21,49 @@ async function main() {
   });
   console.log("Created admin user: admin@govcryptointel.org / admin123");
 
-  // Create default news sources
+  // Create default news sources using feeds that are actually reachable and publish real headlines.
   const sources = [
-    { name: "Ministry of Finance", url: "https://pib.gov.in/RssModule.aspx?type=ministry&id=16", type: "RSS", region: "INDIA", frequencyHours: 6 },
-    { name: "RBI Notifications", url: "https://www.rbi.org.in/Scripts/BS_RssFeeds.aspx", type: "RSS", region: "INDIA", frequencyHours: 6 },
-    { name: "SEBI", url: "https://www.sebi.gov.in/sebiweb/rss/RegulationsRss.jsp", type: "RSS", region: "INDIA", frequencyHours: 6 },
-    { name: "FATF", url: "https://www.fatf-gafi.org/en/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 24 },
+    { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    { name: "BBC Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    { name: "BBC Technology", url: "https://feeds.bbci.co.uk/news/technology/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    { name: "NYTimes Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    { name: "NYTimes World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    { name: "NYTimes Technology", url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
     { name: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss/", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
-    { name: "IMF", url: "https://www.imf.org/en/News/RSS", type: "RSS", region: "GLOBAL", frequencyHours: 24 },
-    { name: "FCA UK", url: "https://www.fca.org.uk/news/rss", type: "RSS", region: "GLOBAL", frequencyHours: 24 },
-    { name: "MAS Singapore", url: "https://www.mas.gov.sg/news/rss", type: "RSS", region: "GLOBAL", frequencyHours: 24 },
+    { name: "Cointelegraph", url: "https://cointelegraph.com/rss", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
   ];
 
   for (const source of sources) {
     await prisma.newsSource.upsert({
       where: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-") },
-      update: {},
+      update: { ...source, isActive: true },
       create: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-"), ...source },
     });
   }
+
+  await prisma.newsSource.updateMany({
+    where: {
+      name: {
+        in: [
+          "Ministry of Finance",
+          "RBI Notifications",
+          "SEBI",
+          "FATF",
+          "IMF",
+          "FCA UK",
+          "MAS Singapore",
+          "Reuters Top News",
+          "Reuters Business News",
+          "Reuters World News",
+          "Reuters Markets News",
+          "Reuters Technology News",
+          "Reuters Crypto Watch",
+        ],
+      },
+    },
+    data: { isActive: false },
+  });
   console.log("Created " + sources.length + " news sources");
 
   // Seed KPIs
