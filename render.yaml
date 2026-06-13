@@ -1,0 +1,55 @@
+# Render blueprint for gov-crypto-intel-hub
+# Replace placeholder secrets and adjust region/plan as needed before importing to Render
+
+services:
+  - type: web
+    name: gov-crypto-intel-hub-web
+    env: node
+    region: oregon
+    branch: master
+    buildCommand: |
+      npm ci
+      npx prisma db push
+      npx tsx prisma/seed.ts
+      npm run build
+    startCommand: npm run start
+    plan: starter
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXTAUTH_URL
+        value: https://gov-crypto-intel-hub.onrender.com
+      - key: NEXTAUTH_SECRET
+        value: "__REPLACE_WITH_SECRET__"
+      - key: DATABASE_URL
+        value: "__REPLACE_WITH_DATABASE_URL__"
+      - key: ANTHROPIC_API_KEY
+        value: ""
+
+  - type: cron
+    name: news-ingest-hourly
+    env: node
+    region: oregon
+    branch: master
+    schedule: "0 * * * *" # every hour
+    command: npx tsx src/lib/ingest.ts
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        value: "__REPLACE_WITH_DATABASE_URL__"
+      - key: NEXTAUTH_SECRET
+        value: "__REPLACE_WITH_SECRET__"
+
+databases:
+  - name: govcrypto-db
+    plan: starter
+    region: oregon
+
+# Notes:
+# 1. After importing this blueprint into Render, update the `DATABASE_URL` env var for the web
+#    service and cron job with the connection string from the created PostgreSQL database.
+# 2. Set `NEXTAUTH_SECRET` to a strong secret in Render's Environment settings.
+# 3. If you prefer to use an external managed DB, set DATABASE_URL accordingly and remove the
+#    `databases` section before import.
+# 4. The build process runs `prisma db push` and the seed script; if you prefer to seed manually,
+#    edit or remove the seed step in `buildCommand`.
