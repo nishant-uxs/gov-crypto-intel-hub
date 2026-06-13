@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-const defaultDatabaseUrl = "file:./prisma/dev.db";
+const defaultDatabaseUrl = "postgresql://postgres:postgres@127.0.0.1:5432/postgres?schema=public";
 
 if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = defaultDatabaseUrl;
