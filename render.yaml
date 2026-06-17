@@ -37,7 +37,7 @@ services:
     branch: master
     schedule: "0 * * * *" # every hour
     buildCommand: npm ci && npx prisma generate
-    command: npx tsx src/lib/ingest.ts
+    startCommand: npx tsx src/lib/ingest.ts
     plan: starter
     envVars:
       - key: DATABASE_URL
