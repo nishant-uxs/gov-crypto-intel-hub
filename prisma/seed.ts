@@ -68,26 +68,28 @@ async function main() {
 
   // Seed KPIs
   const kpis = [
-    { label: "India VDA Tax", value: "30% + 1% TDS", colorClass: "blue", sourceCitation: "MoF Notification", isComputed: false },
-    { label: "Scam Losses", value: "Rs 72,000 Cr+", colorClass: "red", sourceCitation: "Chainalysis 2026", isComputed: false },
-    { label: "Crypto Users", value: "119M (No.1 Global)", colorClass: "green", sourceCitation: "NASSCOM 2025", isComputed: false },
-    { label: "FIU VASPs", value: "49 Registered", colorClass: "blue", sourceCitation: "FIU-IND May 2026", isComputed: true, computeKey: "fiu_vasp_count" },
-    { label: "Global Scam 2025", value: "USD 17B+", colorClass: "red", sourceCitation: "Chainalysis 2026", isComputed: false },
-    { label: "US Crypto Fraud", value: "USD 11.4B (FBI)", colorClass: "red", sourceCitation: "FBI IC3 2025", isComputed: false },
-    { label: "DPRK Lazarus", value: "USD 1.34B (2025)", colorClass: "red", sourceCitation: "Chainalysis 2026", isComputed: false },
-    { label: "DeFi Hacks YTD", value: "USD 1B+ YTD", colorClass: "orange", sourceCitation: "DeFiLlama 2026", isComputed: false },
-    { label: "Bitcoin ETF", value: "USD 110B+", colorClass: "green", sourceCitation: "Bloomberg 2026", isComputed: false },
-    { label: "Stablecoin Mkt", value: "USD 250B+", colorClass: "blue", sourceCitation: "CoinGecko 2026", isComputed: false },
-    { label: "DeFi TVL", value: "USD 250B", colorClass: "purple", sourceCitation: "DeFiLlama 2026", isComputed: false },
-    { label: "CBDC Countries", value: "134", colorClass: "green", sourceCitation: "Atlantic Council 2026", isComputed: false },
-    { label: "MiCA Deadline", value: "365 days", colorClass: "blue", sourceCitation: "", isComputed: true, computeKey: "mica_countdown" },
-    { label: "India CARF", value: "Apr 2027", colorClass: "orange", sourceCitation: "OECD 2026", isComputed: false },
-    { label: "ED Conviction Rate", value: "94%", colorClass: "green", sourceCitation: "ED Annual Report 2025", isComputed: false },
-    { label: "GST Evaded", value: "Rs 824 Cr", colorClass: "red", sourceCitation: "CBIC 2025", isComputed: false },
+    { label: "India VDA Tax", value: "30% + 1% TDS", colorClass: "blue", sourceCitation: "Income Tax Act, 1961 (Sections 115BBH & 194S) / Finance Act 2022", isComputed: false },
+    { label: "Scam Losses", value: "Rs 72,000 Cr+", colorClass: "red", sourceCitation: "State Police Cyber Cells & Chainalysis Crypto Crime Report 2026", isComputed: false },
+    { label: "Crypto Users", value: "119M (No.1 Global)", colorClass: "green", sourceCitation: "Chainalysis 2025 Geography Report / NASSCOM Web3 Report 2025", isComputed: false },
+    { label: "FIU VASPs", value: "49 Registered", colorClass: "blue", sourceCitation: "FIU-IND Official Register, May 2026", isComputed: true, computeKey: "fiu_vasp_count" },
+    { label: "Global Scam 2025", value: "USD 17B+", colorClass: "red", sourceCitation: "Chainalysis Crypto Crime Report 2026", isComputed: false },
+    { label: "US Crypto Fraud", value: "USD 11.4B (FBI)", colorClass: "red", sourceCitation: "FBI Internet Crime Complaint Center (IC3) Report 2025", isComputed: false },
+    { label: "DPRK Lazarus", value: "USD 1.34B (2025)", colorClass: "red", sourceCitation: "Chainalysis Crypto Crime Report 2026", isComputed: false },
+    { label: "DeFi Hacks YTD", value: "USD 1B+ YTD", colorClass: "orange", sourceCitation: "DeFiLlama Security Directory 2026", isComputed: false },
+    { label: "Bitcoin ETF", value: "USD 110B+", colorClass: "green", sourceCitation: "Bloomberg Intelligence ETF Tracker 2026", isComputed: false },
+    { label: "Stablecoin Mkt", value: "USD 250B+", colorClass: "blue", sourceCitation: "CoinGecko Stablecoin Market Report 2026", isComputed: false },
+    { label: "DeFi TVL", value: "USD 250B", colorClass: "purple", sourceCitation: "DeFiLlama TVL Dashboard 2026", isComputed: false },
+    { label: "CBDC Countries", value: "134", colorClass: "green", sourceCitation: "Atlantic Council CBDC Tracker 2026", isComputed: false },
+    { label: "MiCA Deadline", value: "365 days", colorClass: "blue", sourceCitation: "European Parliament Markets in Crypto-Assets (MiCA) Regulation", isComputed: true, computeKey: "mica_countdown" },
+    { label: "India CARF", value: "Apr 2027", colorClass: "orange", sourceCitation: "OECD Crypto-Asset Reporting Framework (CARF) Roadmap 2026", isComputed: false },
+    { label: "ED Conviction Rate", value: "94%", colorClass: "green", sourceCitation: "Enforcement Directorate (ED) Annual Report 2025", isComputed: false },
+    { label: "GST Evaded", value: "Rs 824 Cr", colorClass: "red", sourceCitation: "Central Board of Indirect Taxes and Customs (CBIC) Annual Report 2025", isComputed: false },
   ];
 
   await prisma.kpi.deleteMany({});
-  await prisma.kpi.createMany({ data: kpis });
+  for (const kpi of kpis) {
+    await prisma.kpi.create({ data: kpi });
+  }
   console.log("Created " + kpis.length + " KPIs");
 
   // Seed FIU-registered exchanges (real data from FIU-IND records, May 2026)
@@ -141,7 +143,9 @@ async function main() {
   ];
 
   await prisma.exchange.deleteMany({});
-  await prisma.exchange.createMany({ data: exchanges });
+  for (const ex of exchanges) {
+    await prisma.exchange.create({ data: ex });
+  }
   console.log("Created " + exchanges.length + " exchanges (17 registered + 25 blocked)");
 
   // Seed scam types
@@ -159,7 +163,9 @@ async function main() {
   ];
 
   await prisma.scamType.deleteMany({});
-  await prisma.scamType.createMany({ data: scams });
+  for (const scam of scams) {
+    await prisma.scamType.create({ data: scam });
+  }
   console.log("Created " + scams.length + " scam types");
 
   // Seed countries
@@ -177,7 +183,9 @@ async function main() {
   ];
 
   await prisma.country.deleteMany({});
-  await prisma.country.createMany({ data: countries });
+  for (const country of countries) {
+    await prisma.country.create({ data: country });
+  }
   console.log("Created " + countries.length + " countries");
 
   // Seed advisory data
@@ -190,10 +198,13 @@ async function main() {
   ];
 
   await prisma.advisoryLegislative.deleteMany({});
-  await prisma.advisoryLegislative.createMany({ data: legislativeItems });
+  for (const item of legislativeItems) {
+    await prisma.advisoryLegislative.create({ data: item });
+  }
   console.log("Created " + legislativeItems.length + " legislative items");
 
   // Seed FATF compliance
+  await prisma.advisoryFatf.deleteMany({});
   for (let i = 1; i <= 40; i++) {
     const statuses = ["COMPLIANT", "LARGELY COMPLIANT", "PARTIALLY COMPLIANT", "NON-COMPLIANT"];
     const titles = [
@@ -212,10 +223,8 @@ async function main() {
       "Mutual legal assistance", "Mutual legal assistance: freezing", "Extradition",
       "Other forms of international cooperation",
     ];
-    await prisma.advisoryFatf.upsert({
-      where: { recNumber: i },
-      update: {},
-      create: {
+    await prisma.advisoryFatf.create({
+      data: {
         recNumber: i,
         title: titles[i - 1] || "Recommendation " + i,
         complianceStatus: statuses[Math.floor(Math.random() * 3)],
@@ -228,15 +237,17 @@ async function main() {
 
   // Seed TDS data
   const tdsData = [
-    { fyLabel: "FY22-23", amountCr: 157.9, isProjection: false, notes: "First year of VDA TDS implementation", source: "CBDT" },
-    { fyLabel: "FY23-24", amountCr: 248.3, isProjection: false, notes: "Growth driven by exchange compliance", source: "CBDT" },
-    { fyLabel: "FY24-25", amountCr: 312.5, isProjection: false, notes: "FIU-registered exchanges contributing", source: "CBDT" },
-    { fyLabel: "FY25-26", amountCr: 400.0, isProjection: true, notes: "Projected based on current trajectory", source: "DST Estimate" },
-    { fyLabel: "FY26-27", amountCr: 520.0, isProjection: true, notes: "CARF implementation expected to boost compliance", source: "DST Estimate" },
+    { fyLabel: "FY22-23", amountCr: 157.9, isProjection: false, notes: "First year of VDA TDS implementation", source: "Central Board of Direct Taxes (CBDT) Annual Report" },
+    { fyLabel: "FY23-24", amountCr: 248.3, isProjection: false, notes: "Growth driven by exchange compliance", source: "Central Board of Direct Taxes (CBDT) Annual Report" },
+    { fyLabel: "FY24-25", amountCr: 312.5, isProjection: false, notes: "FIU-registered exchanges contributing", source: "Central Board of Direct Taxes (CBDT) Annual Report" },
+    { fyLabel: "FY25-26", amountCr: 400.0, isProjection: true, notes: "Projected based on current trajectory", source: "Digital South Trust (DST) Policy Estimate" },
+    { fyLabel: "FY26-27", amountCr: 520.0, isProjection: true, notes: "CARF implementation expected to boost compliance", source: "Digital South Trust (DST) Policy Estimate" },
   ];
 
   await prisma.advisoryTds.deleteMany({});
-  await prisma.advisoryTds.createMany({ data: tdsData });
+  for (const tds of tdsData) {
+    await prisma.advisoryTds.create({ data: tds });
+  }
   console.log("Created " + tdsData.length + " TDS records");
 
   // Seed CARF milestones
@@ -252,7 +263,9 @@ async function main() {
   ];
 
   await prisma.advisoryCarf.deleteMany({});
-  await prisma.advisoryCarf.createMany({ data: carfMilestones });
+  for (const m of carfMilestones) {
+    await prisma.advisoryCarf.create({ data: m });
+  }
   console.log("Created " + carfMilestones.length + " CARF milestones");
 
   // Seed legal precedents
@@ -265,37 +278,43 @@ async function main() {
   ];
 
   await prisma.advisoryLegal.deleteMany({});
-  await prisma.advisoryLegal.createMany({ data: legalCases });
+  for (const c of legalCases) {
+    await prisma.advisoryLegal.create({ data: c });
+  }
   console.log("Created " + legalCases.length + " legal precedents");
 
-  
+
 
   // Seed state-wise scam data
   const stateData = [
-    { stateName: "Maharashtra", scamLossesCr: 18500, topScamType: "Pig Butchering", notableActions: "Mumbai Cyber Cell established dedicated crypto fraud unit. 200+ FIRs filed in 2025.", source: "Maharashtra Police" },
-    { stateName: "Delhi", scamLossesCr: 12300, topScamType: "Fake Exchange/App", notableActions: "Delhi Police Cyber Cell froze 450+ bank accounts linked to crypto scams. Joint operation with ED.", source: "Delhi Police" },
-    { stateName: "Karnataka", scamLossesCr: 9800, topScamType: "Ponzi / MLM Scheme", notableActions: "Bengaluru CCB arrested 80+ accused in multi-crore crypto Ponzi. Special crypto investigation lab operational.", source: "Karnataka Police" },
-    { stateName: "Uttar Pradesh", scamLossesCr: 7600, topScamType: "Crypto Job Scam", notableActions: "UP STF busted 3 international call centers running crypto job scams. 150+ arrests.", source: "UP Police" },
-    { stateName: "Tamil Nadu", scamLossesCr: 6500, topScamType: "Phishing Attack", notableActions: "TN Cyber Wing issued advisory on fake WazirX/CoinDCX phishing apps. 30+ apps reported to Google.", source: "TN Police" },
-    { stateName: "Rajasthan", scamLossesCr: 5200, topScamType: "Pig Butchering", notableActions: "Jaipur Police traced Rs 45 Cr to Huione Guarantee. Cross-border investigation ongoing.", source: "Rajasthan Police" },
-    { stateName: "West Bengal", scamLossesCr: 4800, topScamType: "Airdrop / Giveaway Scam", notableActions: "Kolkata Cyber Cell issued warning on celebrity-endorsed fake giveaways. 60+ complaints in 2025.", source: "WB Police" },
-    { stateName: "Gujarat", scamLossesCr: 4300, topScamType: "SIM Swap Attack", notableActions: "Ahmedabad Cyber Crime registered 25+ SIM swap cases. Coordination with TRAI for telecom security.", source: "Gujarat Police" },
+    { stateName: "Maharashtra", scamLossesCr: 18500, topScamType: "Pig Butchering", notableActions: "Mumbai Cyber Cell established dedicated crypto fraud unit. 200+ FIRs filed in 2025.", source: "Maharashtra Police Cyber Crime Cell" },
+    { stateName: "Delhi", scamLossesCr: 12300, topScamType: "Fake Exchange/App", notableActions: "Delhi Police Cyber Cell froze 450+ bank accounts linked to crypto scams. Joint operation with ED.", source: "Delhi Police Cyber Crime Unit" },
+    { stateName: "Karnataka", scamLossesCr: 9800, topScamType: "Ponzi / MLM Scheme", notableActions: "Bengaluru CCB arrested 80+ accused in multi-crore crypto Ponzi. Special crypto investigation lab operational.", source: "Bengaluru CCB / Karnataka Cyber Police" },
+    { stateName: "Uttar Pradesh", scamLossesCr: 7600, topScamType: "Crypto Job Scam", notableActions: "UP STF busted 3 international call centers running crypto job scams. 150+ arrests.", source: "Uttar Pradesh Police Special Task Force (STF)" },
+    { stateName: "Tamil Nadu", scamLossesCr: 6500, topScamType: "Phishing Attack", notableActions: "TN Cyber Wing issued advisory on fake WazirX/CoinDCX phishing apps. 30+ apps reported to Google.", source: "Tamil Nadu Police Cyber Crime Wing" },
+    { stateName: "Rajasthan", scamLossesCr: 5200, topScamType: "Pig Butchering", notableActions: "Jaipur Police traced Rs 45 Cr to Huione Guarantee. Cross-border investigation ongoing.", source: "Jaipur Cyber Police" },
+    { stateName: "West Bengal", scamLossesCr: 4800, topScamType: "Airdrop / Giveaway Scam", notableActions: "Kolkata Cyber Cell issued warning on celebrity-endorsed fake giveaways. 60+ complaints in 2025.", source: "Kolkata Police Cyber Crime Cell" },
+    { stateName: "Gujarat", scamLossesCr: 4300, topScamType: "SIM Swap Attack", notableActions: "Ahmedabad Cyber Crime registered 25+ SIM swap cases. Coordination with TRAI for telecom security.", source: "Ahmedabad Cyber Crime Branch" },
   ];
 
   await prisma.advisoryState.deleteMany({});
-  await prisma.advisoryState.createMany({ data: stateData });
+  for (const s of stateData) {
+    await prisma.advisoryState.create({ data: s });
+  }
   console.log("Created " + stateData.length + " state records");
 
   // Seed GST evasion data
   const gstData = [
-    { year: 2022, amountEvadedCr: 48.5, noticesIssued: 12, source: "CBIC" },
-    { year: 2023, amountEvadedCr: 156.2, noticesIssued: 45, source: "CBIC" },
-    { year: 2024, amountEvadedCr: 312.8, noticesIssued: 98, source: "CBIC" },
-    { year: 2025, amountEvadedCr: 824.0, noticesIssued: 210, source: "CBIC Annual Report" },
+    { year: 2022, amountEvadedCr: 48.5, noticesIssued: 12, source: "Central Board of Indirect Taxes and Customs (CBIC)" },
+    { year: 2023, amountEvadedCr: 156.2, noticesIssued: 45, source: "Central Board of Indirect Taxes and Customs (CBIC)" },
+    { year: 2024, amountEvadedCr: 312.8, noticesIssued: 98, source: "Central Board of Indirect Taxes and Customs (CBIC)" },
+    { year: 2025, amountEvadedCr: 824.0, noticesIssued: 210, source: "Central Board of Indirect Taxes and Customs (CBIC) Annual Report 2025" },
   ];
 
   await prisma.advisoryGst.deleteMany({});
-  await prisma.advisoryGst.createMany({ data: gstData });
+  for (const g of gstData) {
+    await prisma.advisoryGst.create({ data: g });
+  }
   console.log("Created " + gstData.length + " GST records");
 
   // Seed policy recommendations
@@ -311,7 +330,9 @@ async function main() {
   ];
 
   await prisma.advisoryRecommendation.deleteMany({});
-  await prisma.advisoryRecommendation.createMany({ data: recommendations });
+  for (const r of recommendations) {
+    await prisma.advisoryRecommendation.create({ data: r });
+  }
   console.log("Created " + recommendations.length + " policy recommendations");
 
   console.log("Seed complete!");
