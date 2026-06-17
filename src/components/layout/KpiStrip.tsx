@@ -4,7 +4,11 @@ import { daysUntil } from "@/lib/utils";
 async function getKpis() {
   const kpis = await prisma.kpi.findMany({ orderBy: { label: "asc" } });
   const exchangeCount = await prisma.exchange.count({
-    where: { status: "active" },
+    where: {
+      status: {
+        in: ["ACTIVE", "ACTIVE (Limited)", "RESTRUCTURED"],
+      },
+    },
   });
 
   const kpiMap = new Map(kpis.map((k) => [k.computeKey || k.label, k]));

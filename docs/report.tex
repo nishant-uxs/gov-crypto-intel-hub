@@ -219,9 +219,9 @@ gov-crypto-intel-hub/
 \midrule
 \endhead
 User & cuid() & 1 & Admin authentication \\
-NewsSource & cuid() & 8 & RSS feed configurations \\
+NewsSource & cuid() & 9 & RSS feed configurations \\
 NewsItem & cuid() & 0 (live) & Ingested news articles \\
-Exchange & cuid() & 8 & FIU-registered VASPs \\
+Exchange & cuid() & 41 & FIU-registered VASPs \\
 ScamType & cuid() & 10 & Crypto scam taxonomy \\
 Country & cuid() & 10 & National policy profiles \\
 Kpi & cuid() & 16 & Dashboard metrics \\
@@ -936,8 +936,8 @@ Docker Compose for PostgreSQL + app & \texttt{docker-compose.yml} for PostgreSQL
 \midrule
 \endhead
 User & 1 & Manual & admin@govcryptointel.org \\
-NewsSource & 8 & Real RSS endpoints & PIB India, CoinDesk, The Block \\
-Kpi & 16 & MoF, Chainalysis, NASSCOM, FBI IC3, DeFiLlama, Bloomberg, CoinGecko, Atlantic Council, OECD, ED, CBIC & "FIU Registered VASPs: 49", "Global Crypto Users: 675M" \\
+NewsSource & 9 & Real RSS endpoints & BBC, NYTimes, CoinDesk, Cointelegraph \\
+Kpi & 16 & MoF, Chainalysis, NASSCOM, FBI IC3, DeFiLlama, Bloomberg, CoinGecko, Atlantic Council, OECD, ED, CBIC & "FIU Registered VASPs: 49", "Crypto Users: 119M" \\
 Exchange & 41 & FIU-IND Official Records, May 2026 & 16 registered (Bitbns, CoinDCX, WazirX, ZebPay, CoinSwitch, Mudrex, Binance, Coinbase, KuCoin, MEXC...) + 25 blocked (BitMEX, LBank, BingX, Poloniex...) \\
 ScamType & 10 & ED investigations, CERT-In & Pig Butchering, Fake Exchange App, Ponzi MLM \\
 Country & 10 & FATF, national regulators & India, USA, UK, Singapore, UAE, Japan, EU, China, Brazil, Nigeria \\

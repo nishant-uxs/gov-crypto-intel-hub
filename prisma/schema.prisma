@@ -136,7 +136,7 @@ model AdvisoryLegislative {
 
 model AdvisoryFatf {
   id               String   @id @default(cuid())
-  recNumber        Int
+  recNumber        Int      @unique
   title            String
   complianceStatus String   @default("PARTIALLY COMPLIANT")
   gaps             String   @default("")
