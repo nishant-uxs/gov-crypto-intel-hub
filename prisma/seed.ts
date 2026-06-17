@@ -86,9 +86,8 @@ async function main() {
     { label: "GST Evaded", value: "Rs 824 Cr", colorClass: "red", sourceCitation: "CBIC 2025", isComputed: false },
   ];
 
-  for (const kpi of kpis) {
-    await prisma.kpi.create({ data: kpi });
-  }
+  await prisma.kpi.deleteMany({});
+  await prisma.kpi.createMany({ data: kpis });
   console.log("Created " + kpis.length + " KPIs");
 
   // Seed FIU-registered exchanges (real data from FIU-IND records, May 2026)
@@ -141,9 +140,8 @@ async function main() {
     { name: "Huione", registrationNumber: "—", status: "BLOCKED", jurisdiction: "Global", headquarters: "Cambodia", riskLevel: "CRITICAL", regulatoryNotes: "Blocked Oct 2025. No FIU registration.", alerts: JSON.stringify(["Blocked by FIU-IND Oct 2025"]) },
   ];
 
-  for (const ex of exchanges) {
-    await prisma.exchange.create({ data: ex });
-  }
+  await prisma.exchange.deleteMany({});
+  await prisma.exchange.createMany({ data: exchanges });
   console.log("Created " + exchanges.length + " exchanges (17 registered + 25 blocked)");
 
   // Seed scam types
@@ -160,9 +158,8 @@ async function main() {
     { name: "Ransomware", description: "Malware encrypting victim data, demanding crypto payment for decryption.", riskLevel: "HIGH", indiaPrevalence: "High — AIIMS, Oil India, and multiple enterprises targeted", vectors: JSON.stringify(["Email attachments", "Compromised websites", "Network vulnerabilities"]), redFlags: JSON.stringify(["Unexpected file encryption", "Ransom note on screen"]), investigationTips: "Do not pay ransom. Report to CERT-In and NCIIPC. Preserve encrypted files." },
   ];
 
-  for (const scam of scams) {
-    await prisma.scamType.create({ data: scam });
-  }
+  await prisma.scamType.deleteMany({});
+  await prisma.scamType.createMany({ data: scams });
   console.log("Created " + scams.length + " scam types");
 
   // Seed countries
@@ -179,9 +176,8 @@ async function main() {
     { name: "Nigeria", isoCode: "NG", stance: "RESTRICTIVE", regulatoryBody: "SEC Nigeria, CBN", keyLegislation: "CBN Circular on Crypto (2021, revised 2023)", vaspLicensing: "SEC registration framework launched", taxTreatment: "10% tax on digital assets (2023)", fatfStatus: "Partially Compliant", cbdcStatus: "eNaira — Live" },
   ];
 
-  for (const country of countries) {
-    await prisma.country.create({ data: country });
-  }
+  await prisma.country.deleteMany({});
+  await prisma.country.createMany({ data: countries });
   console.log("Created " + countries.length + " countries");
 
   // Seed advisory data
@@ -193,9 +189,8 @@ async function main() {
     { title: "Digital Personal Data Protection Act 2023", type: "notification", status: "ENACTED", sponsor: "MeitY", summary: "Data protection framework applicable to crypto platforms handling Indian user data." },
   ];
 
-  for (const item of legislativeItems) {
-    await prisma.advisoryLegislative.create({ data: item });
-  }
+  await prisma.advisoryLegislative.deleteMany({});
+  await prisma.advisoryLegislative.createMany({ data: legislativeItems });
   console.log("Created " + legislativeItems.length + " legislative items");
 
   // Seed FATF compliance
@@ -217,8 +212,10 @@ async function main() {
       "Mutual legal assistance", "Mutual legal assistance: freezing", "Extradition",
       "Other forms of international cooperation",
     ];
-    await prisma.advisoryFatf.create({
-      data: {
+    await prisma.advisoryFatf.upsert({
+      where: { recNumber: i },
+      update: {},
+      create: {
         recNumber: i,
         title: titles[i - 1] || "Recommendation " + i,
         complianceStatus: statuses[Math.floor(Math.random() * 3)],
@@ -238,9 +235,8 @@ async function main() {
     { fyLabel: "FY26-27", amountCr: 520.0, isProjection: true, notes: "CARF implementation expected to boost compliance", source: "DST Estimate" },
   ];
 
-  for (const tds of tdsData) {
-    await prisma.advisoryTds.create({ data: tds });
-  }
+  await prisma.advisoryTds.deleteMany({});
+  await prisma.advisoryTds.createMany({ data: tdsData });
   console.log("Created " + tdsData.length + " TDS records");
 
   // Seed CARF milestones
@@ -255,9 +251,8 @@ async function main() {
     { stepNumber: 8, title: "Review & Refinement", description: "Review first year implementation and refine processes", targetDate: new Date("2028-03-31"), status: "PLANNED", responsibleBody: "MoF + CBDT" },
   ];
 
-  for (const m of carfMilestones) {
-    await prisma.advisoryCarf.create({ data: m });
-  }
+  await prisma.advisoryCarf.deleteMany({});
+  await prisma.advisoryCarf.createMany({ data: carfMilestones });
   console.log("Created " + carfMilestones.length + " CARF milestones");
 
   // Seed legal precedents
@@ -269,9 +264,8 @@ async function main() {
     { court: "Karnataka High Court", caseReference: "WP 456/2025", caseName: "Crypto Investor v. I-T Department", year: 2025, category: "TAX", rulingSummary: "Directed I-T department to provide clear guidelines on cost basis calculation for crypto assets acquired before 2022.", policyImpact: "Pending CBDT clarification on pre-2022 acquisition cost basis." },
   ];
 
-  for (const c of legalCases) {
-    await prisma.advisoryLegal.create({ data: c });
-  }
+  await prisma.advisoryLegal.deleteMany({});
+  await prisma.advisoryLegal.createMany({ data: legalCases });
   console.log("Created " + legalCases.length + " legal precedents");
 
   
@@ -288,9 +282,8 @@ async function main() {
     { stateName: "Gujarat", scamLossesCr: 4300, topScamType: "SIM Swap Attack", notableActions: "Ahmedabad Cyber Crime registered 25+ SIM swap cases. Coordination with TRAI for telecom security.", source: "Gujarat Police" },
   ];
 
-  for (const s of stateData) {
-    await prisma.advisoryState.create({ data: s });
-  }
+  await prisma.advisoryState.deleteMany({});
+  await prisma.advisoryState.createMany({ data: stateData });
   console.log("Created " + stateData.length + " state records");
 
   // Seed GST evasion data
@@ -301,9 +294,8 @@ async function main() {
     { year: 2025, amountEvadedCr: 824.0, noticesIssued: 210, source: "CBIC Annual Report" },
   ];
 
-  for (const g of gstData) {
-    await prisma.advisoryGst.create({ data: g });
-  }
+  await prisma.advisoryGst.deleteMany({});
+  await prisma.advisoryGst.createMany({ data: gstData });
   console.log("Created " + gstData.length + " GST records");
 
   // Seed policy recommendations
@@ -318,9 +310,8 @@ async function main() {
     { title: "DeFi Regulatory Sandbox", description: "Create an RBI/SEBI regulatory sandbox for DeFi protocols to test compliance frameworks for lending, staking, and decentralized exchange services.", priority: "LOW", implementingBody: "RBI / SEBI", targetTimeline: "Q2 2027", status: "PROPOSED", rationale: "DeFi represents $250B+ in global TVL. India needs a framework before DeFi adoption accelerates domestically." },
   ];
 
-  for (const r of recommendations) {
-    await prisma.advisoryRecommendation.create({ data: r });
-  }
+  await prisma.advisoryRecommendation.deleteMany({});
+  await prisma.advisoryRecommendation.createMany({ data: recommendations });
   console.log("Created " + recommendations.length + " policy recommendations");
 
   console.log("Seed complete!");
