@@ -78,7 +78,7 @@ async function autoTagItems() {
         body: JSON.stringify({
           model: "claude-haiku-4-20250514",
           max_tokens: 20,
-          system: "Classify crypto news into one tag: POLICY, ENFORCEMENT, COMPLIANCE, SCAM, MARKET, or INNOVATION. Reply with only the tag.",
+          system: "Classify crypto/blockchain news into one tag: POLICY, ENFORCEMENT, COMPLIANCE, SCAM, CRYPTO_SCAM, MARKET, INNOVATION, or BLOCKCHAIN. Use CRYPTO_SCAM for news about specific crypto scam incidents, fraud cases, or scam warnings. Use BLOCKCHAIN for general blockchain technology news, DeFi, NFTs, or Web3 developments. Reply with only the tag.",
           messages: [{
             role: "user",
             content: `Title: ${item.title}\nSummary: ${item.summary.substring(0, 300)}`,
@@ -89,7 +89,7 @@ async function autoTagItems() {
       const result = await response.json();
       const tag = result.content?.[0]?.text?.trim() || "";
 
-      const validTags = ["POLICY", "ENFORCEMENT", "COMPLIANCE", "SCAM", "MARKET", "INNOVATION"];
+      const validTags = ["POLICY", "ENFORCEMENT", "COMPLIANCE", "SCAM", "CRYPTO_SCAM", "MARKET", "INNOVATION", "BLOCKCHAIN"];
       if (validTags.includes(tag)) {
         await prisma.newsItem.update({
           where: { id: item.id },
