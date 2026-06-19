@@ -47,16 +47,18 @@ async function main() {
     { name: "The Crypto Basic", url: "https://thecryptobasic.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
     { name: "CryptoDaily", url: "https://cryptodaily.co.uk/feed", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
 
-    // INDIA — Crypto-focused feeds (ACTIVE)
-    // General India business feeds are kept but the ingestion pipeline filters non-crypto items
-    { name: "Economic Times Markets", url: "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", type: "RSS", region: "INDIA", frequencyHours: 1 },
-    { name: "LiveMint Markets", url: "https://www.livemint.com/rss/markets", type: "RSS", region: "INDIA", frequencyHours: 1 },
+    // INDIA — General business feeds (DISABLED — they bring mostly stock/business news, not crypto)
+    { name: "Economic Times Markets", url: "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "LiveMint Markets", url: "https://www.livemint.com/rss/markets", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "NDTV Profit", url: "https://feeds.feedburner.com/ndtvprofit-latest", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "MoneyControl", url: "https://www.moneycontrol.com/rss/latestnews.xml", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "Economic Times Tech", url: "https://economictimes.indiatimes.com/tech/rssfeeds/13357270.cms", type: "RSS", region: "INDIA", frequencyHours: 2, isActive: false },
+    { name: "Business Standard", url: "https://www.business-standard.com/rss/markets-106.rss", type: "RSS", region: "INDIA", frequencyHours: 2, isActive: false },
+    { name: "Financial Express", url: "https://www.financialexpress.com/feed/", type: "RSS", region: "INDIA", frequencyHours: 2, isActive: false },
+
+    // INDIA — Crypto/tech-focused feeds (ACTIVE — these cover Indian crypto news)
     { name: "Inc42", url: "https://inc42.com/feed/", type: "RSS", region: "INDIA", frequencyHours: 2 },
-    { name: "NDTV Profit", url: "https://feeds.feedburner.com/ndtvprofit-latest", type: "RSS", region: "INDIA", frequencyHours: 1 },
-    { name: "MoneyControl", url: "https://www.moneycontrol.com/rss/latestnews.xml", type: "RSS", region: "INDIA", frequencyHours: 1 },
-    { name: "Economic Times Tech", url: "https://economictimes.indiatimes.com/tech/rssfeeds/13357270.cms", type: "RSS", region: "INDIA", frequencyHours: 2 },
-    { name: "Business Standard", url: "https://www.business-standard.com/rss/markets-106.rss", type: "RSS", region: "INDIA", frequencyHours: 2 },
-    { name: "Financial Express", url: "https://www.financialexpress.com/feed/", type: "RSS", region: "INDIA", frequencyHours: 2 },
+    // Global crypto sources also serve India intel via the fallback mechanism
   ];
 
   for (const source of sources) {
@@ -94,6 +96,14 @@ async function main() {
           "NYTimes World",
           "NYTimes Technology",
           "Al Jazeera",
+          // Disable general Indian business feeds
+          "Economic Times Markets",
+          "LiveMint Markets",
+          "NDTV Profit",
+          "MoneyControl",
+          "Economic Times Tech",
+          "Business Standard",
+          "Financial Express",
         ],
       },
     },
