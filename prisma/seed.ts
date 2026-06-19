@@ -22,25 +22,33 @@ async function main() {
   console.log("Created admin user: admin@govcryptointel.org / admin123");
 
   // Create default news sources using feeds that are actually reachable and publish real headlines.
+  // NOTE: General news sources (BBC, NYTimes, Al Jazeera) are DISABLED because they bring
+  // irrelevant non-crypto news. Only crypto/blockchain-focused sources are active.
   const sources = [
-    // GLOBAL — General News
-    { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "BBC Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "BBC Technology", url: "https://feeds.bbci.co.uk/news/technology/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "NYTimes Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "NYTimes World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "NYTimes Technology", url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    // GLOBAL — General News (DISABLED — these bring non-crypto news)
+    { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "BBC Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "BBC Technology", url: "https://feeds.bbci.co.uk/news/technology/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "NYTimes Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "NYTimes World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "NYTimes Technology", url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
 
-    // GLOBAL — Crypto, Blockchain & Scam News
+    // GLOBAL — Crypto, Blockchain & Scam News (ACTIVE)
     { name: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss/", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
     { name: "Cointelegraph", url: "https://cointelegraph.com/rss", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
     { name: "Decrypt", url: "https://decrypt.co/feed", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
     { name: "The Block", url: "https://www.theblock.co/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
     { name: "Bitcoin Magazine", url: "https://bitcoinmagazine.com/feed", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
     { name: "CryptoSlate", url: "https://cryptoslate.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "NewsBTC", url: "https://www.newsbtc.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
+    { name: "Bitcoinist", url: "https://bitcoinist.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "CryptoPotato", url: "https://cryptopotato.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "The Crypto Basic", url: "https://thecryptobasic.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "CryptoDaily", url: "https://cryptodaily.co.uk/feed", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
 
-    // INDIA — Policy, Crypto Scams, Blockchain & Market News
+    // INDIA — Crypto-focused feeds (ACTIVE)
+    // General India business feeds are kept but the ingestion pipeline filters non-crypto items
     { name: "Economic Times Markets", url: "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", type: "RSS", region: "INDIA", frequencyHours: 1 },
     { name: "LiveMint Markets", url: "https://www.livemint.com/rss/markets", type: "RSS", region: "INDIA", frequencyHours: 1 },
     { name: "Inc42", url: "https://inc42.com/feed/", type: "RSS", region: "INDIA", frequencyHours: 2 },
@@ -52,10 +60,12 @@ async function main() {
   ];
 
   for (const source of sources) {
+    const isActive = source.isActive !== undefined ? source.isActive : true;
+    const sourceData = { ...source, isActive };
     await prisma.newsSource.upsert({
       where: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-") },
-      update: { ...source, isActive: true },
-      create: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-"), ...source },
+      update: { ...sourceData },
+      create: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-"), ...sourceData },
     });
   }
 
@@ -76,6 +86,14 @@ async function main() {
           "Reuters Markets News",
           "Reuters Technology News",
           "Reuters Crypto Watch",
+          // Disable general news sources that bring non-crypto news
+          "BBC World",
+          "BBC Business",
+          "BBC Technology",
+          "NYTimes Business",
+          "NYTimes World",
+          "NYTimes Technology",
+          "Al Jazeera",
         ],
       },
     },
