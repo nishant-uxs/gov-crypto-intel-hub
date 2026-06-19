@@ -45,6 +45,8 @@ export function getTagColor(tag: string): string {
     SCAM: "bg-orange-100 text-orange-800",
     MARKET: "bg-purple-100 text-purple-800",
     INNOVATION: "bg-teal-100 text-teal-800",
+    BLOCKCHAIN: "bg-indigo-100 text-indigo-800",
+    CRYPTO_SCAM: "bg-rose-100 text-rose-800",
   };
   return colors[tag] || "bg-gray-100 text-gray-800";
 }

@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { classifyByKeywords, isCryptoRelated } from "@/lib/tagger";
 
 function safePublishedAt(value: any) {
   const date = value ? new Date(value) : new Date();
@@ -31,16 +32,27 @@ async function triggerIngestIfNeeded(region: string) {
         });
         if (exists) continue;
 
+        const title = item.title || "Untitled";
+        const summary = (item.contentSnippet || item.content || "").substring(0, 500);
+
+        // Auto-tag using keyword classifier
+        const tag = classifyByKeywords(title, summary);
+
+        // Skip non-crypto news items from general sources
+        if (!tag && !isCryptoRelated(title, summary)) {
+          continue;
+        }
+
         await prisma.newsItem.create({
           data: {
-            title: item.title || "Untitled",
-            summary: (item.contentSnippet || item.content || "").substring(0, 500),
+            title,
+            summary,
             body: item.content || "",
             url: item.link || "",
             sourceId: source.id,
             region: source.region,
             publishedAt: safePublishedAt(item.pubDate),
-            tag: "",
+            tag: tag || "BLOCKCHAIN", // Default to BLOCKCHAIN for crypto-related but unclassified
           },
         });
       }
@@ -58,6 +70,42 @@ async function triggerIngestIfNeeded(region: string) {
   }
 }
 
+/**
+ * Auto-tag existing untagged items in the database using keyword classification.
+ * This runs lazily when items are fetched.
+ */
+async function autoTagUntaggedItems() {
+  const untagged = await prisma.newsItem.findMany({
+    where: { tag: "" },
+    take: 100,
+    orderBy: { publishedAt: "desc" },
+  });
+
+  if (untagged.length === 0) return;
+
+  for (const item of untagged) {
+    const tag = classifyByKeywords(item.title, item.summary);
+    if (tag) {
+      await prisma.newsItem.update({
+        where: { id: item.id },
+        data: { tag },
+      });
+    } else if (!isCryptoRelated(item.title, item.summary)) {
+      // Suppress non-crypto news items so they don't show up
+      await prisma.newsItem.update({
+        where: { id: item.id },
+        data: { isSuppressed: true, tag: "UNRELATED" },
+      });
+    } else {
+      // Crypto-related but can't classify specifically — default to BLOCKCHAIN
+      await prisma.newsItem.update({
+        where: { id: item.id },
+        data: { tag: "BLOCKCHAIN" },
+      });
+    }
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const page = parseInt(searchParams.get("page") || "1");
@@ -68,16 +116,32 @@ export async function GET(req: NextRequest) {
 
   await triggerIngestIfNeeded(region);
 
+  // Auto-tag any untagged items in the background
+  autoTagUntaggedItems().catch((e) =>
+    console.error("Auto-tag error:", e.message)
+  );
+
   const where: any = {
     region,
     isSuppressed: false,
   };
 
-  if (tag) where.tag = tag;
+  if (tag) {
+    // Specific tag filter — no need for NOT clause
+    where.tag = tag;
+  } else {
+    // No tag filter — exclude unrelated and empty-tagged items
+    where.tag = { notIn: ["UNRELATED", ""] };
+  }
+
   if (search) {
-    where.OR = [
-      { title: { contains: search, mode: "insensitive" } },
-      { summary: { contains: search, mode: "insensitive" } },
+    where.AND = [
+      {
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { summary: { contains: search, mode: "insensitive" } },
+        ],
+      },
     ];
   }
 

@@ -1,6 +1,12 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { classifyByKeywords, isCryptoRelated } from "@/lib/tagger";
+
+function safePublishedAt(value: any) {
+  const date = value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+}
 
 export async function POST() {
   try {
@@ -9,6 +15,7 @@ export async function POST() {
     });
 
     let ingested = 0;
+    let skipped = 0;
     let errors = 0;
 
     for (const source of sources) {
@@ -23,16 +30,28 @@ export async function POST() {
           });
           if (exists) continue;
 
+          const title = item.title || "Untitled";
+          const summary = (item.contentSnippet || item.content || "").substring(0, 500);
+
+          // Auto-tag using keyword classifier
+          const tag = classifyByKeywords(title, summary);
+
+          // Skip non-crypto news items
+          if (!tag && !isCryptoRelated(title, summary)) {
+            skipped++;
+            continue;
+          }
+
           await prisma.newsItem.create({
             data: {
-              title: item.title || "Untitled",
-              summary: item.contentSnippet || item.content || "",
+              title,
+              summary,
               body: item.content || "",
               url: item.link || "",
               sourceId: source.id,
               region: source.region,
-              publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
-              tag: "",
+              publishedAt: safePublishedAt(item.pubDate),
+              tag: tag || "BLOCKCHAIN",
             },
           });
           ingested++;
@@ -51,7 +70,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ ingested, errors, sources: sources.length });
+    return NextResponse.json({ ingested, skipped, errors, sources: sources.length });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -22,23 +22,52 @@ async function main() {
   console.log("Created admin user: admin@govcryptointel.org / admin123");
 
   // Create default news sources using feeds that are actually reachable and publish real headlines.
+  // NOTE: General news sources (BBC, NYTimes, Al Jazeera) are DISABLED because they bring
+  // irrelevant non-crypto news. Only crypto/blockchain-focused sources are active.
   const sources = [
-    { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "BBC Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "BBC Technology", url: "https://feeds.bbci.co.uk/news/technology/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "NYTimes Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "NYTimes World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "NYTimes Technology", url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
-    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1 },
+    // GLOBAL — General News (DISABLED — these bring non-crypto news)
+    { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "BBC Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "BBC Technology", url: "https://feeds.bbci.co.uk/news/technology/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "NYTimes Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "NYTimes World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "NYTimes Technology", url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", type: "RSS", region: "GLOBAL", frequencyHours: 1, isActive: false },
+
+    // GLOBAL — Crypto, Blockchain & Scam News (ACTIVE)
     { name: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss/", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
     { name: "Cointelegraph", url: "https://cointelegraph.com/rss", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
+    { name: "Decrypt", url: "https://decrypt.co/feed", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
+    { name: "The Block", url: "https://www.theblock.co/rss.xml", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
+    { name: "Bitcoin Magazine", url: "https://bitcoinmagazine.com/feed", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "CryptoSlate", url: "https://cryptoslate.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "NewsBTC", url: "https://www.newsbtc.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 2 },
+    { name: "Bitcoinist", url: "https://bitcoinist.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "CryptoPotato", url: "https://cryptopotato.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "The Crypto Basic", url: "https://thecryptobasic.com/feed/", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+    { name: "CryptoDaily", url: "https://cryptodaily.co.uk/feed", type: "RSS", region: "GLOBAL", frequencyHours: 3 },
+
+    // INDIA — General business feeds (DISABLED — they bring mostly stock/business news, not crypto)
+    { name: "Economic Times Markets", url: "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "LiveMint Markets", url: "https://www.livemint.com/rss/markets", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "NDTV Profit", url: "https://feeds.feedburner.com/ndtvprofit-latest", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "MoneyControl", url: "https://www.moneycontrol.com/rss/latestnews.xml", type: "RSS", region: "INDIA", frequencyHours: 1, isActive: false },
+    { name: "Economic Times Tech", url: "https://economictimes.indiatimes.com/tech/rssfeeds/13357270.cms", type: "RSS", region: "INDIA", frequencyHours: 2, isActive: false },
+    { name: "Business Standard", url: "https://www.business-standard.com/rss/markets-106.rss", type: "RSS", region: "INDIA", frequencyHours: 2, isActive: false },
+    { name: "Financial Express", url: "https://www.financialexpress.com/feed/", type: "RSS", region: "INDIA", frequencyHours: 2, isActive: false },
+
+    // INDIA — Crypto/tech-focused feeds (ACTIVE — these cover Indian crypto news)
+    { name: "Inc42", url: "https://inc42.com/feed/", type: "RSS", region: "INDIA", frequencyHours: 2 },
+    // Global crypto sources also serve India intel via the fallback mechanism
   ];
 
   for (const source of sources) {
+    const isActive = source.isActive !== undefined ? source.isActive : true;
+    const sourceData = { ...source, isActive };
     await prisma.newsSource.upsert({
       where: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-") },
-      update: { ...source, isActive: true },
-      create: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-"), ...source },
+      update: { ...sourceData },
+      create: { id: source.name.toLowerCase().replace(/[^a-z0-9]/g, "-"), ...sourceData },
     });
   }
 
@@ -59,6 +88,22 @@ async function main() {
           "Reuters Markets News",
           "Reuters Technology News",
           "Reuters Crypto Watch",
+          // Disable general news sources that bring non-crypto news
+          "BBC World",
+          "BBC Business",
+          "BBC Technology",
+          "NYTimes Business",
+          "NYTimes World",
+          "NYTimes Technology",
+          "Al Jazeera",
+          // Disable general Indian business feeds
+          "Economic Times Markets",
+          "LiveMint Markets",
+          "NDTV Profit",
+          "MoneyControl",
+          "Economic Times Tech",
+          "Business Standard",
+          "Financial Express",
         ],
       },
     },
@@ -170,14 +215,31 @@ async function main() {
 
   // Seed countries
   const countries = [
+    // === G20 MEMBER COUNTRIES ===
+    { name: "Argentina", isoCode: "AR", stance: "PERMISSIVE", regulatoryBody: "CNV (Comisión Nacional de Valores)", keyLegislation: "Digital Assets Regulation (2024), FATF-aligned AML Law", vaspLicensing: "CNV registration required for VASPs", taxTreatment: "15% capital gains tax on crypto", fatfStatus: "Partially Compliant", cbdcStatus: "Research phase" },
+    { name: "Australia", isoCode: "AU", stance: "REGULATED", regulatoryBody: "ASIC, AUSTRAC", keyLegislation: "Digital Assets (Market Regulation) Bill 2024", vaspLicensing: "AUSTRAC registration mandatory for DCEs", taxTreatment: "Capital gains tax (up to 45%)", fatfStatus: "Compliant", cbdcStatus: "eAUD — Pilot completed" },
+    { name: "Brazil", isoCode: "BR", stance: "REGULATED", regulatoryBody: "Central Bank of Brazil, CVM", keyLegislation: "Law 14,478/2022 (Crypto Framework Law)", vaspLicensing: "Central Bank license required (effective 2024)", taxTreatment: "15-22.5% capital gains tax", fatfStatus: "Largely Compliant", cbdcStatus: "DREX (Digital Real) — Pilot phase" },
+    { name: "Canada", isoCode: "CA", stance: "REGULATED", regulatoryBody: "CSA, FINTRAC, OSC", keyLegislation: "Proceeds of Crime (Money Laundering) Act, Securities Acts", vaspLicensing: "MSB registration + provincial securities compliance", taxTreatment: "50% capital gains inclusion rate", fatfStatus: "Compliant", cbdcStatus: "Digital CAD — Research phase" },
+    { name: "China", isoCode: "CN", stance: "BANNED", regulatoryBody: "PBOC", keyLegislation: "Notice on Further Preventing Crypto Trading (2021)", vaspLicensing: "All crypto trading/exchange banned", taxTreatment: "N/A — banned", fatfStatus: "Largely Compliant", cbdcStatus: "e-CNY — Wide pilot deployment" },
+    { name: "France", isoCode: "FR", stance: "REGULATED", regulatoryBody: "AMF, ACPR", keyLegislation: "PACTE Law (2019), MiCA Regulation (2024)", vaspLicensing: "AMF DASP registration mandatory (MiCA license from 2025)", taxTreatment: "30% flat tax on crypto gains", fatfStatus: "Compliant", cbdcStatus: "Digital Euro — ECB preparation phase" },
+    { name: "Germany", isoCode: "DE", stance: "REGULATED", regulatoryBody: "BaFin", keyLegislation: "Banking Act (KWG), Electronic Securities Act (eWpG), MiCA", vaspLicensing: "BaFin crypto custody license required", taxTreatment: "Tax-free if held >1 year; otherwise income tax", fatfStatus: "Compliant", cbdcStatus: "Digital Euro — ECB preparation phase" },
     { name: "India", isoCode: "IN", stance: "REGULATED", regulatoryBody: "FIU-IND, RBI, SEBI", keyLegislation: "PMLA 2002, IT Act 2000, Finance Act 2022", vaspLicensing: "FIU-IND registration mandatory", taxTreatment: "30% tax on gains + 1% TDS", fatfStatus: "Largely Compliant", cbdcStatus: "e₹ (Digital Rupee) — Pilot phase" },
+    { name: "Indonesia", isoCode: "ID", stance: "REGULATED", regulatoryBody: "OJK (Financial Services Authority), Bappebti", keyLegislation: "Regulation 8/2021 on Crypto Asset Trading", vaspLicensing: "Bappebti registration required; OJK oversight from 2025", taxTreatment: "0.1% income tax + 0.11% VAT per transaction", fatfStatus: "Largely Compliant", cbdcStatus: "Digital Rupiah — Research phase" },
+    { name: "Italy", isoCode: "IT", stance: "REGULATED", regulatoryBody: "OAM, Consob, Bank of Italy", keyLegislation: "Budget Law 2023 (crypto tax), MiCA Regulation", vaspLicensing: "OAM registration mandatory for VASPs", taxTreatment: "26% capital gains tax (above €2,000 threshold)", fatfStatus: "Compliant", cbdcStatus: "Digital Euro — ECB preparation phase" },
+    { name: "Japan", isoCode: "JP", stance: "REGULATED", regulatoryBody: "FSA", keyLegislation: "Payment Services Act, FIEA", vaspLicensing: "FSA registration mandatory", taxTreatment: "Miscellaneous income tax (up to 55%)", fatfStatus: "Compliant", cbdcStatus: "Digital Yen — Proof of Concept" },
+    { name: "Mexico", isoCode: "MX", stance: "REGULATED", regulatoryBody: "CNBV, Banco de México", keyLegislation: "Fintech Law (Ley Fintech, 2018)", vaspLicensing: "CNBV authorization required for crypto operations", taxTreatment: "Income tax on crypto gains (progressive rates)", fatfStatus: "Largely Compliant", cbdcStatus: "Digital Peso — Research phase" },
+    { name: "Russia", isoCode: "RU", stance: "RESTRICTIVE", regulatoryBody: "Central Bank of Russia, Ministry of Finance", keyLegislation: "Digital Financial Assets Law (2020), Mining Law (2024)", vaspLicensing: "Crypto payments banned; mining regulated since 2024", taxTreatment: "13-15% income tax on crypto gains", fatfStatus: "Largely Compliant", cbdcStatus: "Digital Ruble — Pilot phase" },
+    { name: "Saudi Arabia", isoCode: "SA", stance: "RESTRICTIVE", regulatoryBody: "SAMA (Saudi Central Bank), CMA", keyLegislation: "No specific crypto legislation; SAMA warnings", vaspLicensing: "No formal licensing framework; crypto trading discouraged", taxTreatment: "No personal income tax (general)", fatfStatus: "Largely Compliant", cbdcStatus: "Project Aber (with UAE) — Completed pilot" },
+    { name: "South Africa", isoCode: "ZA", stance: "REGULATED", regulatoryBody: "FSCA, SARB", keyLegislation: "Financial Sector Regulation Act, FSCA Declaration (2022)", vaspLicensing: "FSCA license required for crypto asset service providers", taxTreatment: "Capital gains tax (up to 18% effective rate)", fatfStatus: "Partially Compliant (grey list)", cbdcStatus: "Project Khokha — Pilot completed" },
+    { name: "South Korea", isoCode: "KR", stance: "REGULATED", regulatoryBody: "FSC, FIU Korea", keyLegislation: "Virtual Asset User Protection Act (2024)", vaspLicensing: "FSC/FIU registration mandatory; real-name bank accounts required", taxTreatment: "20% tax on gains above ₩2.5M (deferred to 2027)", fatfStatus: "Compliant", cbdcStatus: "Digital Won — Pilot phase" },
+    { name: "Turkey", isoCode: "TR", stance: "REGULATED", regulatoryBody: "CMB (Capital Markets Board), MASAK", keyLegislation: "Capital Markets Law Amendment (2024) for crypto regulation", vaspLicensing: "CMB licensing framework launched 2024", taxTreatment: "Under development (no specific crypto tax yet)", fatfStatus: "Largely Compliant (removed from grey list 2024)", cbdcStatus: "Digital Lira — Research phase" },
+    { name: "United Kingdom", isoCode: "GB", stance: "REGULATED", regulatoryBody: "FCA", keyLegislation: "Financial Services and Markets Act, MLRs 2017", vaspLicensing: "FCA registration mandatory", taxTreatment: "Capital gains tax", fatfStatus: "Compliant", cbdcStatus: "Digital Pound — Design phase" },
     { name: "United States", isoCode: "US", stance: "REGULATED", regulatoryBody: "SEC, CFTC, FinCEN", keyLegislation: "Bank Secrecy Act, Securities Act", vaspLicensing: "MSB registration + state money transmitter licenses", taxTreatment: "Capital gains tax", fatfStatus: "Largely Compliant", cbdcStatus: "Research phase" },
     { name: "European Union", isoCode: "EU", stance: "REGULATED", regulatoryBody: "ESMA, EBA", keyLegislation: "MiCA Regulation (effective 2024-2025)", vaspLicensing: "MiCA license required", taxTreatment: "Varies by member state", fatfStatus: "Compliant", cbdcStatus: "Digital Euro — Preparation phase" },
-    { name: "United Kingdom", isoCode: "GB", stance: "REGULATED", regulatoryBody: "FCA", keyLegislation: "Financial Services and Markets Act, MLRs 2017", vaspLicensing: "FCA registration mandatory", taxTreatment: "Capital gains tax", fatfStatus: "Compliant", cbdcStatus: "Digital Pound — Design phase" },
+
+    // === ADDITIONAL KEY MARKETS (Non-G20) ===
+    { name: "United Arab Emirates", isoCode: "AE", stance: "PERMISSIVE", regulatoryBody: "VARA (Dubai), ADGM (Abu Dhabi)", keyLegislation: "Virtual Asset Law (Dubai)", vaspLicensing: "VARA license in Dubai", taxTreatment: "No personal income tax", fatfStatus: "Largely Compliant", cbdcStatus: "Digital Dirham — Pilot phase" },
     { name: "Singapore", isoCode: "SG", stance: "REGULATED", regulatoryBody: "MAS", keyLegislation: "Payment Services Act 2019", vaspLicensing: "MAS license required", taxTreatment: "No capital gains tax (generally)", fatfStatus: "Compliant", cbdcStatus: "Project Orchid — Pilot phase" },
-    { name: "Japan", isoCode: "JP", stance: "REGULATED", regulatoryBody: "FSA", keyLegislation: "Payment Services Act, FIEA", vaspLicensing: "FSA registration mandatory", taxTreatment: "Miscellaneous income tax (up to 55%)", fatfStatus: "Compliant", cbdcStatus: "Digital Yen — Proof of Concept" },
-    { name: "China", isoCode: "CN", stance: "BANNED", regulatoryBody: "PBOC", keyLegislation: "Notice on Further Preventing Crypto Trading (2021)", vaspLicensing: "All crypto trading/exchange banned", taxTreatment: "N/A — banned", fatfStatus: "Largely Compliant", cbdcStatus: "e-CNY — Wide pilot deployment" },
-    { name: "UAE", isoCode: "AE", stance: "PERMISSIVE", regulatoryBody: "VARA (Dubai), ADGM (Abu Dhabi)", keyLegislation: "Virtual Asset Law (Dubai)", vaspLicensing: "VARA license in Dubai", taxTreatment: "No personal income tax", fatfStatus: "Largely Compliant", cbdcStatus: "Digital Dirham — Pilot phase" },
     { name: "Switzerland", isoCode: "CH", stance: "PERMISSIVE", regulatoryBody: "FINMA", keyLegislation: "DLT Act 2021", vaspLicensing: "FINMA license required", taxTreatment: "Wealth tax + income tax", fatfStatus: "Compliant", cbdcStatus: "Project Helvetia — Pilot" },
     { name: "Nigeria", isoCode: "NG", stance: "RESTRICTIVE", regulatoryBody: "SEC Nigeria, CBN", keyLegislation: "CBN Circular on Crypto (2021, revised 2023)", vaspLicensing: "SEC registration framework launched", taxTreatment: "10% tax on digital assets (2023)", fatfStatus: "Partially Compliant", cbdcStatus: "eNaira — Live" },
   ];

@@ -17,7 +17,7 @@ interface NewsItem {
   source: { name: string };
 }
 
-const TAGS = ["POLICY", "ENFORCEMENT", "COMPLIANCE", "SCAM", "MARKET", "INNOVATION"];
+const TAGS = ["POLICY", "ENFORCEMENT", "COMPLIANCE", "SCAM", "MARKET", "INNOVATION", "BLOCKCHAIN", "CRYPTO_SCAM"];
 
 export function IndiaIntel() {
   const [items, setItems] = useState<NewsItem[]>([]);
