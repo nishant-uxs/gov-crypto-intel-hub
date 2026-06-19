@@ -113,7 +113,7 @@ export function classifyByKeywords(title: string, summary: string): string {
   for (const indicator of NON_CRYPTO_INDICATORS) {
     if (text.includes(indicator)) {
       // Only exclude if there's no crypto keyword present at all
-      const hasCryptoKeyword = TAG_KEYWORDS.BLOCKCHAIN.some(kw => text.includes(kw.trim()));
+      const hasCryptoKeyword = isCryptoRelated(title, summary);
       if (!hasCryptoKeyword) return "";
     }
   }
